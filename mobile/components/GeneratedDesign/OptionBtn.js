@@ -3,9 +3,9 @@ import React from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { FontAwesome } from '@expo/vector-icons';
 import { fonts } from '../Fonts';
-export default function OptionBtn({iconName, txt, action}) {
+export default function OptionBtn({iconName, txt, action, disable}) {
   return (
-    <Pressable style={styles.option} onPress={action}>
+    <Pressable style={styles.option} onPress={action} disabled={disable}>
         <FontAwesome name={iconName} size={24} color="#0c575f" />
         <Text style={[styles.optionTxt, fonts.regular400]}>
             {txt}

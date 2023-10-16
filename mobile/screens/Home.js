@@ -13,6 +13,7 @@ import { fonts } from '../components/Fonts';
 import storage from "@react-native-async-storage/async-storage";
 import ExampleModal from '../components/Home/ExampleModal';
 import { Camera } from 'expo-camera';
+import axios from "axios";
 export default function Home() {
 
   const cameraRef = useRef();
@@ -23,6 +24,7 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
   const [exampleModal, setExampleModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [disable, setDisable] = useState(false);
   useEffect(() => {
     const showExampleModal = async () => {
       if(await storage.getItem("firstTimeHome") === null) {
@@ -40,6 +42,21 @@ export default function Home() {
   }, []);
   const toGeneratedDesign = () => {
     navigation.replace("GeneratedDesign");
+  }
+  const generateDesign = async () => {
+    setDisable(true);
+    const {data} = await axios.post("https://stablediffusionapi.com/api/v5/interior", {
+      key: "",
+      init_image: "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
+      prompt: "room",
+      steps: 50,
+      guidance_scale: 7
+    }, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    toGeneratedDesign();
   }
   const toPaywall = () => {
     navigation.navigate("Paywall");
@@ -87,9 +104,9 @@ export default function Home() {
           </Pressable>
         </View>
         <RoomSelector room={room} setRoom={setRoom} />
-        <Main photo={photo} setPhoto={setPhoto} setExampleModal={setExampleModal} setShowCamera={setShowCamera} />
+        <Main photo={photo} setPhoto={setPhoto} setExampleModal={setExampleModal} setShowCamera={setShowCamera} disable={disable} />
         <StyleSelector roomStyle={style} setStyle={setStyle} />
-        <Pressable style={styles.btn} onPress={toGeneratedDesign}>
+        <Pressable style={styles.btn} onPress={generateDesign}>
           <Text style={[styles.btnTxt, fonts.bold700]}>
             Render new idea
           </Text>

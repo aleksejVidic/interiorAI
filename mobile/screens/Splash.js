@@ -4,10 +4,17 @@ import {ScaledSheet} from "react-native-size-matters";
 import { useNavigation } from '@react-navigation/native';
 import storage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from 'expo-linear-gradient';
+import NetInfo from '@react-native-community/netinfo';
 export default function Splash() {
 
   const imgOpacity = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
+
+  const checkNetwork = NetInfo.addEventListener(state => {
+    if(!state.isConnected) {
+      navigation.replace("ConnectionLost");
+    }
+  })
   useEffect(() => {
     let id;
     Animated.timing(imgOpacity, {
@@ -25,7 +32,10 @@ export default function Splash() {
         navigation.replace("Home");
       }, 1000);
     });
-    return () => clearTimeout(id);
+    return () => {
+      clearTimeout(id);
+      checkNetwork();
+    }
   }, []);
   return (
     <SafeAreaView style={styles.container}>

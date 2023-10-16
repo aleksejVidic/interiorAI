@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View ,Share } from 'react-native'
-import React from 'react'
+import React, {useState} from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { FontAwesome5 } from '@expo/vector-icons';
 import OptionBtn from './OptionBtn';
@@ -10,6 +10,8 @@ import { useNavigation } from '@react-navigation/native';
 export default function Main() {
 
     const navigation = useNavigation();
+    const [disable, setDisable] = useState(false);
+    const [imageUrl, setImageUrl] = useState();
     const backHome = () => {
         navigation.replace("Home");
     }
@@ -26,6 +28,19 @@ export default function Main() {
         let value = await MediaLibrary.saveToLibraryAsync("file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fmobile-1710fd3c-1f6d-4c37-84a3-4f64bca05a0a/ImagePicker/f6854524-a7e7-4bc1-99d4-05bd6bf182cb.png");
         console.log(value);
     }
+    const generateOtherIdea = async () => {
+        const {data} = await axios.post("https://stablediffusionapi.com/api/v5/interior", {
+            key: "",
+            init_image: "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
+            prompt: "room",
+            steps: 50,
+            guidance_scale: 7
+            }, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    }
   return (
     <>
         <View style={styles.mainContainer}>
@@ -35,15 +50,15 @@ export default function Main() {
                 style={styles.generatedImg}
             />
         </View>
-        <Pressable style={styles.regenerate}>
+        <Pressable style={styles.regenerate} onPress={generateOtherIdea} disabled={disable}>
             <Text style={[styles.regenerateTxt, fonts.bold700]}>
                 Render other idea
             </Text>
         </Pressable>
         <View style={styles.optionContainer}>
-            <OptionBtn iconName="download" txt="Save" action={savePicture} />
-            <OptionBtn iconName="home" txt="Home" action={backHome} />
-            <OptionBtn iconName="share-alt" txt="Share" action={sharePicture} />
+            <OptionBtn iconName="download" txt="Save" action={savePicture} disable={disable} />
+            <OptionBtn iconName="home" txt="Home" action={backHome} disable={disable} />
+            <OptionBtn iconName="share-alt" txt="Share" action={sharePicture} disable={disable} />
         </View>
     </>
   )
