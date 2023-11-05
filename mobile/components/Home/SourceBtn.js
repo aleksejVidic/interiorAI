@@ -3,9 +3,9 @@ import React from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { MaterialIcons } from '@expo/vector-icons';
 import { fonts } from '../Fonts';
-export default function SourceBtn({iconName, text, action}) {
+export default function SourceBtn({ iconName, text, action, disable }) {
   return (
-    <Pressable style={styles.btn} onPress={action}>
+    <Pressable style={styles.btn} onPress={action} disabled={disable}>
         <MaterialIcons name={iconName} size={24} color="#0c575f" />
         <Text style={[styles.btnTxt, fonts.regular400]}>
             {text}

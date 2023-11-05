@@ -1,4 +1,4 @@
-import { Modal, Pressable, StyleSheet, Text, View, Image } from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { AntDesign } from '@expo/vector-icons';
@@ -77,7 +77,6 @@ export default function ExampleModal({ exampleModal, setExampleModal}) {
                                 height: "100%",
                                 borderRadius: 5,
                                 borderWidth: 1,
-                                borderColor: "red"
                             }}
                         />
                         <View 
@@ -99,11 +98,11 @@ export default function ExampleModal({ exampleModal, setExampleModal}) {
                         ><AntDesign name="close" size={15} color="white" /></View>
                     </View>
                 </View>
-                <Pressable style={styles.btn} onPress={() => setExampleModal(false)}>
+                <TouchableOpacity style={styles.btn} onPress={() => setExampleModal(false)}>
                     <Text style={[styles.btnTxt, fonts.bold700]}>
                         Got it!
                     </Text>
-                </Pressable>
+                </TouchableOpacity>
             </View>
         </View>
     </Modal>

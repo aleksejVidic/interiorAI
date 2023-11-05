@@ -1,5 +1,6 @@
 
 import { StyleSheet, Text, View, StatusBar, Easing } from 'react-native';
+import { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from '@react-navigation/stack';
 import Splash from './screens/Splash';
@@ -11,7 +12,9 @@ import Onboarding from './screens/Onboarding';
 import ChooseScreen from './screens/ChooseScreen';
 import Onboarding2 from './screens/Onboarding2';
 import Notifications from "./screens/Notifications";
-import AppLoading from 'expo-app-loading';import {
+import AppLoading from 'expo-app-loading';
+import NetInfo from '@react-native-community/netinfo';
+import {
   useFonts,
   Inter_100Thin,
   Inter_200ExtraLight,
@@ -44,6 +47,7 @@ import {
   Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
 import Discount from './screens/Discount';
+import ConnectionLost from './screens/ConnectionLost';
 const Stack = createStackNavigator();
 export default function App() {
 
@@ -83,6 +87,15 @@ export default function App() {
       easing: Easing.linear
     },
   }
+  useEffect(() => {
+    const checkNetwork = NetInfo.addEventListener(state => {
+      if(!state.isConnected) {
+        navigation.replace("ConnectionLost");
+      }
+    })
+    
+    checkNetwork();
+  }, []);
   if(!fontsLoaded) {
     return <AppLoading />
   } else {
@@ -178,6 +191,10 @@ export default function App() {
               //   }
               // }
             }}
+          />
+          <Stack.Screen 
+            name="ConnectionLost"
+            component={ConnectionLost}
           />
         </Stack.Navigator>
     </NavigationContainer>

@@ -7,9 +7,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { fonts } from '../components/Fonts';
 import Settings from '../components/Settings/Settings';
 
-export default function GeneratedDesign() {
+export default function GeneratedDesign({route, navigation}) {
 
   const [isVisible, setIsVisible] = useState(false);
+  const { genPhoto } = route.params;
+  console.log(genPhoto);
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -32,7 +34,7 @@ export default function GeneratedDesign() {
             <Ionicons name="settings" size={24} color="white" onPress={() => setIsVisible(true)} />
           </View>
         </View>
-        <Main />
+        <Main photo={genPhoto} />
       </LinearGradient>
     </SafeAreaView>
   )

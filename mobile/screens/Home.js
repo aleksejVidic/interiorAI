@@ -14,6 +14,7 @@ import storage from "@react-native-async-storage/async-storage";
 import ExampleModal from '../components/Home/ExampleModal';
 import { Camera } from 'expo-camera';
 import axios from "axios";
+import CameraModel from '../components/Home/CameraModel';
 export default function Home() {
 
   const cameraRef = useRef();
@@ -40,23 +41,55 @@ export default function Home() {
     showDiscount();
     showExampleModal();
   }, []);
-  const toGeneratedDesign = () => {
-    navigation.replace("GeneratedDesign");
+  const toGeneratedDesign = (genPhoto) => {
+    navigation.replace("GeneratedDesign", {
+      genPhoto
+    });
   }
   const generateDesign = async () => {
-    setDisable(true);
-    const {data} = await axios.post("https://stablediffusionapi.com/api/v5/interior", {
-      key: "",
-      init_image: "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
-      prompt: "room",
-      steps: 50,
-      guidance_scale: 7
-    }, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    toGeneratedDesign();
+    // const {data} = await axios.post('https://stablediffusionapi.com/api/v5/interior', {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   data: {
+    //     key: "Ru9PaqdoFwYIOL0WNjrIqWDYo5DDcLM4RBKaU6hc81HYROPhmWeOm9uIiLPa",
+    //     init_image : "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
+    //     prompt : "room",
+    //     steps : 50,
+    //     guidance_scale : 7
+    //   }
+    // });
+    try {
+      setDisable(true);
+      const jsonData = JSON.stringify({
+          key: process.env.EXPO_PUBLIC_API_KEY,
+          init_image : "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
+          prompt : "room",
+          steps : 50,
+          guidance_scale : 7
+      })
+      // const {data} = await axios({
+      //   url: 'https://stablediffusionapi.com/api/v5/interior',
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   data: jsonData
+      // })
+      const fetchData = await fetch(process.env.EXPO_PUBLIC_API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: jsonData
+      });
+      const data = await fetchData.json();
+      console.log(data);
+      setDisable(false);
+      toGeneratedDesign(data.output[0]);
+    } catch(err) {
+      console.log(err);
+    }
+    
   }
   const toPaywall = () => {
     navigation.navigate("Paywall");
@@ -72,7 +105,6 @@ export default function Home() {
     console.log(newPhoto);
   }
 
-  if(!showCamera) {
     return (
       <SafeAreaView style={{
         flex: 1,
@@ -86,6 +118,7 @@ export default function Home() {
               width: "100%",
           }}
         >
+          <CameraModel visible={showCamera} setVisible={setShowCamera} setPhoto={setPhoto} />
           <ExampleModal exampleModal={exampleModal} setExampleModal={setExampleModal} />
           {isVisible && <Settings isVisible={isVisible} setIsVisible={setIsVisible} />}
           <View style={styles.header}>
@@ -104,9 +137,14 @@ export default function Home() {
           </Pressable>
         </View>
         <RoomSelector room={room} setRoom={setRoom} />
-        <Main photo={photo} setPhoto={setPhoto} setExampleModal={setExampleModal} setShowCamera={setShowCamera} disable={disable} />
+        <Main 
+          photo={photo} 
+          setPhoto={setPhoto} 
+          setExampleModal={setExampleModal} 
+          setShowCamera={setShowCamera} 
+          disable={disable} />
         <StyleSelector roomStyle={style} setStyle={setStyle} />
-        <Pressable style={styles.btn} onPress={generateDesign}>
+        <Pressable style={styles.btn} onPress={generateDesign} disabled={disable}>
           <Text style={[styles.btnTxt, fonts.bold700]}>
             Render new idea
           </Text>
@@ -115,14 +153,6 @@ export default function Home() {
       </SafeAreaView>
     )
   }
-  return (
-    <Camera ref={cameraRef} style={styles.cameraContainer}>
-      <Pressable onPress={takePicture} style={styles.btnContainer}>
-        <View style={styles.btnCamera} />
-      </Pressable>
-    </Camera>
-  )
-}
 
 const styles = ScaledSheet.create({
   header: {

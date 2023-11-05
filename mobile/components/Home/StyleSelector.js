@@ -58,7 +58,7 @@ export default function StyleSelector({roomStyle, setStyle}) {
     >
        {roomStyles.map(room => (
         <Pressable onPress={() => setStyle(room.name)} style={styles.styleOption} key={room.name}>
-          <Text style={[styles.styleTxt, {fontWeight: room.name === roomStyle ? "bold" : "normal"}, fonts.regular400]}>
+          <Text style={[styles.styleTxt, room.name === roomStyle ? fonts.bold700 : fonts.regular400]}>
             {room.name}
           </Text>
           {/* <View style={styles.imgContainer}>

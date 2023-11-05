@@ -7,7 +7,7 @@ import { Camera } from 'expo-camera';
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 import storage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
-export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCamera }) {
+export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCamera, disable }) {
 
   const [cameraPerm, setCameraPerm] = Camera.useCameraPermissions();
   const [filePerm, setFilePerm] = MediaLibrary.usePermissions();
@@ -39,9 +39,9 @@ export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCam
         Selct
       </Text>
       <View style={styles.source}>
-        <SourceBtn iconName="lightbulb" text="Tips" action={tipsBtn} />
-        <SourceBtn iconName="photo" text="Photos" action={filesBtn} />
-        <SourceBtn iconName="photo-camera" text="Camera" action={cameraBtn} />
+        <SourceBtn iconName="lightbulb" text="Tips" action={tipsBtn} disable = {disable} />
+        <SourceBtn iconName="photo" text="Photos" action={filesBtn} disable={disable} />
+        <SourceBtn iconName="photo-camera" text="Camera" action={cameraBtn} disable={disable} />
       </View>
     </Pressable>
   )

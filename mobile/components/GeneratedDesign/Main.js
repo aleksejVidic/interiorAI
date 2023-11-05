@@ -1,52 +1,63 @@
-import { Image, Pressable, StyleSheet, Text, View ,Share } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View, Share } from 'react-native'
 import React, {useState} from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { FontAwesome5 } from '@expo/vector-icons';
 import OptionBtn from './OptionBtn';
 import { fonts } from '../Fonts';
-import * as Sharing from "expo-sharing";
+
 import * as MediaLibrary from "expo-media-library";
 import { useNavigation } from '@react-navigation/native';
-export default function Main() {
+export default function Main({ photo }) {
 
     const navigation = useNavigation();
     const [disable, setDisable] = useState(false);
     const [imageUrl, setImageUrl] = useState();
+    const [permission, setPermission] = MediaLibrary.usePermissions();
     const backHome = () => {
         navigation.replace("Home");
     }
     const sharePicture = async () => {
         let value = await Share.share({
-            url: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fmobile-1710fd3c-1f6d-4c37-84a3-4f64bca05a0a/ImagePicker/f6854524-a7e7-4bc1-99d4-05bd6bf182cb.png",
-            message: "Share your impressions with your friend!",
-            
-            
+            message: photo
         })
         console.log(value);
     }
     const savePicture = async () => {
-        let value = await MediaLibrary.saveToLibraryAsync("file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fmobile-1710fd3c-1f6d-4c37-84a3-4f64bca05a0a/ImagePicker/f6854524-a7e7-4bc1-99d4-05bd6bf182cb.png");
-        console.log(value);
+        try {
+            const album = await MediaLibrary.getAlbumAsync("Download");
+            await MediaLibrary.addAssetsToAlbumAsync(photo, album, false);
+        }catch(err) {
+            console.log(err);
+        }
     }
     const generateOtherIdea = async () => {
-        const {data} = await axios.post("https://stablediffusionapi.com/api/v5/interior", {
-            key: "",
-            init_image: "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
-            prompt: "room",
-            steps: 50,
-            guidance_scale: 7
-            }, {
-            headers: {
+        try {
+            const jsonData = JSON.stringify({
+                  key: process.env.EXPO_PUBLIC_API_KEY,
+                  init_image : "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
+                  prompt : "room",
+                  steps : 50,
+                  guidance_scale : 7
+              })
+            const fetchData = await fetch(process.env.EXPO_PUBLIC_API_ENDPOINT, {
+                method: "POST",
+                headers: {
                 "Content-Type": "application/json"
-            }
-        })
+                },
+                body: jsonData
+            });
+            const data = await fetchData.json();
+            setImageUrl(data.output[0]);
+        } catch(err) {
+            console.log(err);
+        }
     }
   return (
     <>
         <View style={styles.mainContainer}>
             <Image 
-                source={require("../../assets/roomStyles/christmas.jpg")}
-                resizeMode='contain'
+                source={{uri: photo}}
+                resizeMode='cover'
                 style={styles.generatedImg}
             />
         </View>
@@ -76,6 +87,7 @@ const styles = ScaledSheet.create({
     generatedImg: {
         width: "100%",
         height: "100%",
+        borderRadius: "20@ms"
     },
     regenerate: {
         alignItems: "center",
