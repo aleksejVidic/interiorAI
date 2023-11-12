@@ -11,14 +11,22 @@ export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCam
 
   const [cameraPerm, setCameraPerm] = Camera.useCameraPermissions();
   const [filePerm, setFilePerm] = MediaLibrary.usePermissions();
-  const cameraBtn = () => {
-      setShowCamera(true);
+  const [status, requestPermission] = ImagePicker.useCameraPermissions();
+  const cameraBtn = async () => {
+      try {
+        const photo =  await ImagePicker.launchCameraAsync({
+          quality: 1,
+          base64: true,
+          aspect: [1, 1]
+        })
+        if(!photo.canceled) {
+          setPhoto(photo.assets[0].base64);
+        }
+      } catch(err) {
+        console.log(err);
+      }
   }
   const filesBtn = async () => {
-    // if(await ImagePicker.getMediaLibraryPermissionsAsync().status === "granted") {
-    //   const filePermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    //   setFilePerm(filePermission.status === "granted");
-    // }
     const image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -27,8 +35,8 @@ export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCam
     })
     if(!image.canceled) {
       setPhoto(image.assets[0].uri);
-      console.log(image.assets[0]);
     }
+
   }
   const tipsBtn = () => {
     setExampleModal(true);

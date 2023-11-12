@@ -4,9 +4,12 @@ import { ScaledSheet } from 'react-native-size-matters'
 import { FontAwesome5 } from '@expo/vector-icons';
 import OptionBtn from './OptionBtn';
 import { fonts } from '../Fonts';
-
+import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { shareAsync } from 'expo-sharing';
+import * as ImagePicker from "expo-image-picker";
 export default function Main({ photo }) {
 
     const navigation = useNavigation();
@@ -24,8 +27,13 @@ export default function Main({ photo }) {
     }
     const savePicture = async () => {
         try {
-            const album = await MediaLibrary.getAlbumAsync("Download");
-            await MediaLibrary.addAssetsToAlbumAsync(photo, album, false);
+            // const album = await MediaLibrary.getAlbumAsync("Download");
+            // console.log(album);
+            // await MediaLibrary.addAssetsToAlbumAsync(photo, album.id, false);
+            const downImg = await FileSystem.downloadAsync(photo, FileSystem.documentDirectory + "image.png");
+            console.log(downImg);
+            await MediaLibrary.saveToLibraryAsync(downImg.uri);
+            
         }catch(err) {
             console.log(err);
         }
@@ -42,7 +50,7 @@ export default function Main({ photo }) {
             const fetchData = await fetch(process.env.EXPO_PUBLIC_API_ENDPOINT, {
                 method: "POST",
                 headers: {
-                "Content-Type": "application/json"
+                    "Content-Type": "application/json"
                 },
                 body: jsonData
             });

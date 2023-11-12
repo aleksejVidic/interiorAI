@@ -11,7 +11,6 @@ export default function GeneratedDesign({route, navigation}) {
 
   const [isVisible, setIsVisible] = useState(false);
   const { genPhoto } = route.params;
-  console.log(genPhoto);
   return (
     <SafeAreaView style={{
       flex: 1,

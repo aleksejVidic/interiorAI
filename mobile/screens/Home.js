@@ -21,7 +21,7 @@ export default function Home() {
   const navigation = useNavigation();
   const [room, setRoom] = useState("Living room");
   const [style, setStyle] = useState("Barbie");
-  const [photo, setPhoto] = useState();
+  const [photo, setPhoto] = useState("https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png");
   const [isVisible, setIsVisible] = useState(false);
   const [exampleModal, setExampleModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -60,14 +60,19 @@ export default function Home() {
     //   }
     // });
     try {
+      if(photo == null) {
+        return;
+      }
       setDisable(true);
       const jsonData = JSON.stringify({
           key: process.env.EXPO_PUBLIC_API_KEY,
-          init_image : "https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png",
-          prompt : "room",
+          init_image : photo,
+          prompt : `${room}, ${style} style`,
           steps : 50,
-          guidance_scale : 7
+          guidance_scale : 7,
+
       })
+      console.log(jsonData);
       // const {data} = await axios({
       //   url: 'https://stablediffusionapi.com/api/v5/interior',
       //   headers: {
@@ -82,12 +87,14 @@ export default function Home() {
         },
         body: jsonData
       });
+      
       const data = await fetchData.json();
       console.log(data);
       setDisable(false);
       toGeneratedDesign(data.output[0]);
     } catch(err) {
       console.log(err);
+      setDisable(false);
     }
     
   }
