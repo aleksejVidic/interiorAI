@@ -12,16 +12,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { fonts } from '../components/Fonts';
 import storage from "@react-native-async-storage/async-storage";
 import ExampleModal from '../components/Home/ExampleModal';
-import { Camera } from 'expo-camera';
 import axios from "axios";
-import CameraModel from '../components/Home/CameraModel';
+import ImageKit from "imagekit-javascript" 
 export default function Home() {
 
   const cameraRef = useRef();
   const navigation = useNavigation();
   const [room, setRoom] = useState("Living room");
   const [style, setStyle] = useState("Barbie");
-  const [photo, setPhoto] = useState("https://huggingface.co/lllyasviel/sd-controlnet-mlsd/resolve/main/images/room.png");
+  const [photo, setPhoto] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [exampleModal, setExampleModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -63,35 +62,40 @@ export default function Home() {
       if(photo == null) {
         return;
       }
-      setDisable(true);
-      const jsonData = JSON.stringify({
-          key: process.env.EXPO_PUBLIC_API_KEY,
-          init_image : photo,
-          prompt : `${room}, ${style} style`,
-          steps : 50,
-          guidance_scale : 7,
-
-      })
-      console.log(jsonData);
-      // const {data} = await axios({
-      //   url: 'https://stablediffusionapi.com/api/v5/interior',
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   data: jsonData
-      // })
-      const fetchData = await fetch(process.env.EXPO_PUBLIC_API_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: jsonData
+      const imagekit = new ImageKit({
+        urlEndpoint: "https://ik.imagekit.io/apor5ws3a/",
+        publicKey: "public_Ha7I049z1l+5NpPnX9PhMl2lX8g=",
+        authenticationEndpoint: "http://192.168.1.55:5000/auth"
       });
+      console.log(imagekit);
+      const uploadedImg = await imagekit.upload({
+        file: photo,
+        fileName: photo.slice(photo.lastIndexOf("/") + 1),
+      })
+      console.log(uploadedImg);
+      //setDisable(true);
+      console.log(imageURL);
+      // const jsonData = JSON.stringify({
+      //     key: process.env.EXPO_PUBLIC_API_KEY,
+      //     init_image : photo,
+      //     prompt : `${room}, ${style} style`,
+      //     steps : 50,
+      //     guidance_scale : 7,
+
+      // })
+      // console.log(jsonData);
+      // const fetchData = await fetch(process.env.EXPO_PUBLIC_API_ENDPOINT, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json"
+      //   },
+      //   body: jsonData
+      // });
       
-      const data = await fetchData.json();
-      console.log(data);
-      setDisable(false);
-      toGeneratedDesign(data.output[0]);
+      // const data = await fetchData.json();
+      // console.log(data);
+      // setDisable(false);
+      // toGeneratedDesign(data.output[0]);
     } catch(err) {
       console.log(err);
       setDisable(false);
@@ -125,23 +129,22 @@ export default function Home() {
               width: "100%",
           }}
         >
-          <CameraModel visible={showCamera} setVisible={setShowCamera} setPhoto={setPhoto} />
           <ExampleModal exampleModal={exampleModal} setExampleModal={setExampleModal} />
           {isVisible && <Settings isVisible={isVisible} setIsVisible={setIsVisible} />}
           <View style={styles.header}>
           
-          <Text style={[styles.title, fonts.bold700]}>
-            Your Current Interior
-          </Text>
-          <Pressable onPress={toPaywall} style={styles.proContainer}>
-            <FontAwesome5 name="crown" size={24} color="yellow" />
-            <Text style={[styles.pro, fonts.semibold600]}>
-              gift
+            <Text style={[styles.title, fonts.bold700]}>
+              Your Current Interior
             </Text>
-          </Pressable>
-          <Pressable onPress={() => setIsVisible(true)} style={styles.settings}>
-            <Ionicons name="settings" size={24} color="white" />
-          </Pressable>
+            <Pressable onPress={toPaywall} style={styles.proContainer}>
+              <FontAwesome5 name="crown" size={24} color="yellow" />
+              <Text style={[styles.pro, fonts.semibold600]}>
+                gift
+              </Text>
+            </Pressable>
+            <Pressable onPress={() => setIsVisible(true)} style={styles.settings}>
+              <Ionicons name="settings" size={24} color="white" />
+            </Pressable>
         </View>
         <RoomSelector room={room} setRoom={setRoom} />
         <Main 

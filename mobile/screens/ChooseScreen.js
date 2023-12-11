@@ -1,5 +1,5 @@
 import { Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native'
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import Options from '../components/ChooseScreen/Options';
 import { useNavigation } from '@react-navigation/native';

@@ -26,7 +26,12 @@ export default function Options({roomOpt, setRoomOpt}) {
   return (
     <View style={styles.optionContainer}>
       {roomOptions.map(roomOptiom => (
-        <Pressable onPress={() => setRoomOpt(roomOptiom.roomName)} key={roomOptiom.roomName} style={[styles.option, {borderColor: roomOpt === roomOptiom.roomName ? "white" : "#c5d8da"}]}>
+        <Pressable 
+            onPress={() => setRoomOpt(roomOptiom.roomName)} key={roomOptiom.roomName} 
+            style={
+                [styles.option, 
+                    {borderColor: roomOpt === roomOptiom.roomName ? "white" : "#c5d8da"}
+                ]}>
             <MaterialCommunityIcons name={roomOptiom.iconName} size={24} color="white" />
             <Text style={[styles.optionTxt, fonts.regular400]}>
                 {roomOptiom.roomName}
