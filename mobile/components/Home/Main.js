@@ -3,24 +3,21 @@ import React, { useRef, useState, useEffect, memo } from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import SourceBtn from './SourceBtn'
 import { fonts } from '../Fonts'
-import { Camera } from 'expo-camera';
-import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 import storage, { useAsyncStorage } from "@react-native-async-storage/async-storage";
-export default memo(function Main({ photo, setPhoto, setExampleModal, setShowCamera, disable }) {
+export default memo(function Main({ photo, setPhoto, setExampleModal, disable }) {
 
-  const [cameraPerm, setCameraPerm] = Camera.useCameraPermissions();
-  const [filePerm, setFilePerm] = MediaLibrary.usePermissions();
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
   const cameraBtn = async () => {
       try {
         const photo =  await ImagePicker.launchCameraAsync({
           quality: 1,
-          base64: true,
+          base64: false,
           aspect: [1, 1]
         })
+        console.log(photo);
         if(!photo.canceled) {
-          setPhoto(photo.assets[0].base64);
+          setPhoto(photo.assets[0].uri);
         }
       } catch(err) {
         console.log(err);

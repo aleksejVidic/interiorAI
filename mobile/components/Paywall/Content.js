@@ -1,7 +1,6 @@
 import { ScrollView, StyleSheet, Text, View, Animated, Dimensions, Pressable } from 'react-native'
 import React, { useEffect } from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
-import { LinearGradient } from 'expo-linear-gradient'
 import Constants from "expo-constants"
 import PricingTable from './PricingTable'
 import Header from './Header'
@@ -11,7 +10,7 @@ import FAQ from './FAQ'
 import { fonts } from '../Fonts'
 
 const { height } = Dimensions.get("window");
-export default function Content({offset}) {
+export default function Content({ offset }) {
   return (
     <ScrollView 
         style={styles.container}

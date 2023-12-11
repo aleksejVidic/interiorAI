@@ -2,7 +2,6 @@ import { Modal, Pressable, StyleSheet, Text, View, Image, TouchableOpacity } fro
 import React from 'react'
 import { ScaledSheet } from 'react-native-size-matters'
 import { AntDesign } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { fonts } from '../Fonts';
 export default function ExampleModal({ exampleModal, setExampleModal}) {
   return (
