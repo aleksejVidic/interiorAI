@@ -12,12 +12,14 @@ export default memo(function Main({ photo, setPhoto, setExampleModal, disable })
       try {
         const photo =  await ImagePicker.launchCameraAsync({
           quality: 1,
-          base64: false,
-          aspect: [1, 1]
+          base64: true,
+          aspect: [16, 9],
+          allowsEditing: true,
+          cameraType: "back"
         })
         console.log(photo);
         if(!photo.canceled) {
-          setPhoto(photo.assets[0].uri);
+          setPhoto(photo.assets[0].base64);
         }
       } catch(err) {
         console.log(err);

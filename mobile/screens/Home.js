@@ -62,19 +62,38 @@ export default function Home() {
       if(photo == null) {
         return;
       }
-      const imagekit = new ImageKit({
-        urlEndpoint: "https://ik.imagekit.io/apor5ws3a/",
-        publicKey: "public_Ha7I049z1l+5NpPnX9PhMl2lX8g=",
-        authenticationEndpoint: "http://192.168.1.55:5000/auth"
+      const formData = new FormData();
+      formData.append("photo", photo);
+      formData.append("room", room);
+      formData.append("style", style);
+      const data = JSON.stringify({
+        photo: photo,
+        style: style,
+        room: room,
       });
-      console.log(imagekit);
-      const uploadedImg = await imagekit.upload({
-        file: photo,
-        fileName: photo.slice(photo.lastIndexOf("/") + 1),
-      })
-      console.log(uploadedImg);
-      //setDisable(true);
-      console.log(imageURL);
+      // const imagekit = new ImageKit({
+      //   urlEndpoint: "https://ik.imagekit.io/apor5ws3a/",
+      //   publicKey: "public_Ha7I049z1l+5NpPnX9PhMl2lX8g=",
+      //   authenticationEndpoint: "http://localhost:5000/auth"
+      // });
+      // console.log(imagekit);
+      // const uploadedImg = await imagekit.upload({
+      //   file: photo,
+      //   fileName: photo.slice(photo.lastIndexOf("/") + 1),
+      // })
+      // console.log(uploadedImg);
+      // //setDisable(true);
+      // console.log(imageURL);
+      console.log(formData._parts[2][1]);
+      const res = await fetch("http://192.168.100.5:5000/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: data
+      });
+      const jsonRes = await res.json();
+      console.log(jsonRes);
       // const jsonData = JSON.stringify({
       //     key: process.env.EXPO_PUBLIC_API_KEY,
       //     init_image : photo,
