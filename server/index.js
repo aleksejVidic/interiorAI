@@ -25,13 +25,11 @@ app.post("/auth", async (req, res) => {
         console.log("Ruta");
         console.log(req.body);
         const { photo, room, style } = req.body;
-        console.log(photo);
         const result = await imageKit.upload({
             file: photo,
             fileName: "image-1.jpg",
             
         });
-        console.log(result);
         const raw = JSON.stringify({
             key: process.env.STABLE_DIFFUSION_API_KEY,
             init_image: result.url,
@@ -47,7 +45,6 @@ app.post("/auth", async (req, res) => {
             body: raw
         });
         const jsonRes = await roomInterior.json();
-        console.log(jsonRes);
         if(jsonRes.status === "processing") {
             console.log("Another fetch")
             const a = await fetch("https://stablediffusionapi.com/api/v4/dreambooth/fetch", {
